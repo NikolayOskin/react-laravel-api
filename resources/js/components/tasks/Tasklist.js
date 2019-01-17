@@ -3,12 +3,6 @@ import TaskItem from './TaskItem.js';
 import { connect } from 'react-redux';
 import { getAllTasks } from "../../actions/taskActions";
 
-const mapStateToProps = function(state){
-    return {
-        tasks: state.tasks.items,
-    }
-};
-
 class Tasklist extends Component {
     componentWillMount() {
         this.props.getAllTasks();
@@ -34,7 +28,6 @@ class Tasklist extends Component {
                 );
             });
 
-            
         return (
             <table className="table">
               <thead>
@@ -50,5 +43,11 @@ class Tasklist extends Component {
         );
     }
 }
+
+const mapStateToProps = (state) => {
+    return {
+        tasks: state.tasks.items
+    };
+};
 
 export default connect(mapStateToProps, { getAllTasks })(Tasklist);

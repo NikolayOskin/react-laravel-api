@@ -4,14 +4,38 @@ import { addTask } from "../../actions/taskActions";
 import { connect } from 'react-redux';
 
 class AddTask extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            title: '',
+            body: '',
+            newTaskAdded: false
+        };
+        this.handleFieldChange = this.handleFieldChange.bind(this);
+        this.addTask = this.addTask.bind(this);
+    };
     handleFieldChange (event) {
         this.setState({
-            [event.target.name]: event.target.value
-        })
+                [event.target.name]: event.target.value
+            });
+    }
+    addTask(e) {
+        e.preventDefault();
+        let task = {
+            title: this.state.title,
+            body: this.state.body
+        };
+        this.props.addTask(task);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if(nextProps.task) {
+            this.state.newTaskAdded = true;
+        }
     }
 
     render() {
-        let redirect = this.state.added ? <Redirect to="/" /> : '';
+        let redirect = this.state.newTaskAdded ? <Redirect to="/" /> : '';
         return (
             <div>
                 <h1>Создать задачу:</h1>
@@ -21,7 +45,7 @@ class AddTask extends Component {
                             className="form-control"
                             type="text"
                             name="title"
-                            value=""
+                            value={this.state.title}
                             onChange={this.handleFieldChange}
                         />
                     </div>
@@ -31,7 +55,7 @@ class AddTask extends Component {
                             name="body"
                             id="body" cols="30"
                             rows="10"
-                            value=""
+                            value={this.state.body}
                             onChange={this.handleFieldChange}
                         >
 
@@ -45,4 +69,10 @@ class AddTask extends Component {
     }
 }
 
-export default connect(null, null)(AddTask);
+const mapStateToProps = (state) => {
+    return {
+        task: state.tasks.item
+    };
+};
+
+export default connect(mapStateToProps, { addTask })(AddTask);
