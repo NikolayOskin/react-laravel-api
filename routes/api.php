@@ -22,3 +22,5 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::delete('/tasks/delete', 'TaskController@delete');
 });
 
+Route::post('/register', 'Api\UserController@register');
+Route::post('/login', 'Api\UserController@login');
