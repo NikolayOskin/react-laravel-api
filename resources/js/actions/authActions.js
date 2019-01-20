@@ -1,20 +1,39 @@
-import { GET_TOKEN } from "./types";
+import {GET_TOKEN, REGISTER, CHECK_TOKEN} from "./types";
 import axios from 'axios';
 
-const credentials = {
-    username: 'homenick.astrid@example.net',
-    password: 'secret',
-    grant_type: 'password',
-    client_id: 2,
-    client_secret: 's9X6p3B2Rkc8H1pQBwZhm83iDnM7jMXO64Ju1G7A',
-};
-
-export const login = () => {
+export const login = (credentials) => {
     return (dispatch) => {
-        axios.post('/oauth/token', credentials)
+        axios.post('/api/login', credentials)
             .then(response => dispatch({
                 type: GET_TOKEN,
                 payload: response.data.access_token
+            }))
+            .catch(error => {
+                throw(error);
+            });
+    }
+};
+
+export const register = (user) => {
+    return (dispatch) => {
+        axios.post('/api/register', user)
+            .then(response => dispatch({
+                type: REGISTER,
+                payload: response.data
+            }))
+    }
+};
+
+export const checkToken = (token) => {
+    return (dispatch) => {
+        axios.get(`http://127.0.0.1:8000/api/user`, {
+            headers: {
+                Authorization: 'Bearer ' + token
+            }
+        })
+            .then(res => dispatch({
+                type: CHECK_TOKEN,
+                payload: res.data
             }))
             .catch(error => {
                 throw(error);
