@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 
 
 Route::group(['middleware' => ['auth:api']], function () {
+    Route::get('/user', 'Api\UserController@checkToken');
     Route::get('/tasks', 'TaskController@index');
     Route::get('/tasks/{id}', 'TaskController@show');
     Route::post('/tasks/store', 'TaskController@store');
@@ -24,3 +25,4 @@ Route::group(['middleware' => ['auth:api']], function () {
 
 Route::post('/register', 'Api\UserController@register');
 Route::post('/login', 'Api\UserController@login');
+
