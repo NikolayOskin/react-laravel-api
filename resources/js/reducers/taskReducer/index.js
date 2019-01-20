@@ -15,6 +15,8 @@ export default function (state = initialState, action) {
         case NEW_TASK:
             return {
                 ...state,
+                items: [action.payload, ...state.items],
+                // ...state,
                 item: action.payload
             };
         default:
