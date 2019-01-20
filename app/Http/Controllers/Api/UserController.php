@@ -2,14 +2,21 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Proxy\HttpKernelProxy;
 use App\User;
-use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
+    protected $proxy;
+
+    public function __construct(HttpKernelProxy $proxy)
+    {
+        $this->proxy = $proxy;
+    }
+
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -31,23 +38,22 @@ class UserController extends Controller
 
     public function login(Request $request)
     {
-        $http = new Client([
-            'base_uri' => 'http://127.0.0.1:8000',
-            'defaults' => [
-                'exceptions' => false
-            ]
-        ]);
-        $response = $http->post('/oauth/token', [
-            'form_params' => [
-                'grant_type' => 'password',
-                'client_id' => config('auth.proxy.client_id'),
-                'client_secret' => config('auth.proxy.client_secret'),
-                'username' => $request->email,
-                'password' => $request->password,
-                'scope' => '',
-            ],
+        $response = $this->proxy->postJson('oauth/token', [
+            'client_id' => config('auth.proxy.client_id'),
+            'client_secret' => config('auth.proxy.client_secret'),
+            'grant_type' => config('auth.proxy.grant_type'),
+            'username' => $request->username,
+            'password' => $request->password,
+            'scopes' => '[*]'
         ]);
 
-        return json_decode((string) $response->getBody(), true);
+        return $response;
+
+        //return json_decode((string) $response->getBody(), true);
+    }
+
+    public function checkToken(Request $request)
+    {
+        return $request->user() ? response()->json( true ) : response()->json( false );
     }
 }

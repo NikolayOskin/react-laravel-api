@@ -10,6 +10,7 @@ class TaskController extends Controller
     public function index(Request $request)
     {
         $tasks = Task::where('user_id', $request->user()->id)
+            ->orderBy('created_at', 'desc')
             ->get(['id', 'title', 'body']);
         return $tasks;
     }
