@@ -11,7 +11,7 @@ class TaskController extends Controller
     {
         $tasks = Task::where('user_id', $request->user()->id)
             ->orderBy('created_at', 'desc')
-            ->get(['id', 'title', 'body']);
+            ->get(['id', 'title', 'body', 'tracked_time']);
         return $tasks;
     }
 
